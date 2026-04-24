@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.3
+
+- Added back the copy button in level selection screen
+- Removed copy button from pause menu
+
 ## v1.0.2
 
 - Fixed "possible crashes"
