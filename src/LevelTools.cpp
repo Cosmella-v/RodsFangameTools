@@ -211,34 +211,38 @@ class $modify(MyLevelAreaInnerLayer, LevelAreaInnerLayer) {
     bool init(bool returning) {
         if (!LevelAreaInnerLayer::init(returning)) return false;
 
-        auto mainNode = this->getChildByID("main-node");
-        if (mainNode) {
-            auto menu = mainNode->getChildByID("main-menu");
-            if (menu) {
-                for (CCNode* button : menu->getChildrenExt()) {
-                    if (button->getTag() > 0) {
-                        CCSprite* buttonSprite = CircleButtonSprite::create(
-                            CCLabelBMFont::create("Copy\nLevel", "bigFont.fnt", 0.f, CCTextAlignment::kCCTextAlignmentCenter),
-                            CircleBaseColor::Green,
-                            CircleBaseSize::Small
-                        );
-                        CCMenuItemSpriteExtra* copyButton = CCMenuItemSpriteExtra::create(
-                            buttonSprite,
-                            this,
-                            menu_selector(MyLevelAreaInnerLayer::onCopyLevel)
-                        );
+        bool copyMainLevels = Mod::get()->getSettingValue<bool>("copy-main-levels");
 
-                        copyButton->setPositionX(button->getPositionX());
-                        copyButton->setPositionY(button->getPositionY() - 45.f);
-                        copyButton->setTag(button->getTag());
-                        menu->addChild(copyButton);
+        if (copyMainLevels) {
+            auto mainNode = this->getChildByID("main-node");
+            if (mainNode) {
+                auto menu = mainNode->getChildByID("main-menu");
+                if (menu) {
+                    for (CCNode* button : menu->getChildrenExt()) {
+                        if (button->getTag() > 0) {
+                            CCSprite* buttonSprite = CircleButtonSprite::create(
+                                CCLabelBMFont::create("Copy\nLevel", "bigFont.fnt", 0.f, CCTextAlignment::kCCTextAlignmentCenter),
+                                CircleBaseColor::Green,
+                                CircleBaseSize::Small
+                            );
+                            CCMenuItemSpriteExtra* copyButton = CCMenuItemSpriteExtra::create(
+                                buttonSprite,
+                                this,
+                                menu_selector(MyLevelAreaInnerLayer::onCopyLevel)
+                            );
+
+                            copyButton->setPositionX(button->getPositionX());
+                            copyButton->setPositionY(button->getPositionY() - 45.f);
+                            copyButton->setTag(button->getTag());
+                            menu->addChild(copyButton);
+                        }
                     }
+                } else {
+                    log::debug("no menu");
                 }
             } else {
-                log::debug("no menu");
+                log::debug("no main node");
             }
-        } else {
-            log::debug("no main node");
         }
 
         return true;
