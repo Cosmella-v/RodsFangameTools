@@ -8,9 +8,9 @@
 	},
 	"id": "omgrod.rods-fangame-tools",
 	"name": "Rod's Fangame Tools",
-	"version": "v1.0.1",
+	"version": "v1.0.2",
 	"developer": "OmgRod",
-	"description": "",
+	"description": "A set of utils for making fangames.",
 	"dependencies": {
 		"geode.node-ids": ">=v1.20.0"
 	},

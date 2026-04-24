@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.2
+
+- Fixed "possible crashes"
+- Fixed Copy Level button showing up on all levels
+
 ## v1.0.1
 
 - Fixed bug where main levels would end up on the saved tab

@@ -9,8 +9,7 @@ using namespace geode::prelude;
 
 class $modify(LevelEditPLHook, PauseLayer) {
     void customSetup() override {
-        auto scene = CCDirector::sharedDirector()->getRunningScene();
-        auto layer = scene->getChildByType<PlayLayer>(0);
+        auto layer = GameManager::sharedState()->getPlayLayer();
         
         if (layer) {
             auto level = layer->m_level;
@@ -22,10 +21,10 @@ class $modify(LevelEditPLHook, PauseLayer) {
             PauseLayer::customSetup();
         }
     }
-    
+
     void onTryEdit(CCObject* sender) {
-        auto scene = CCDirector::sharedDirector()->getRunningScene();
-        auto layer = scene->getChildByType<PlayLayer>(0);
+        auto layer = GameManager::sharedState()->getPlayLayer();
+        
         auto level = layer->m_level;
         auto levelType = level->m_levelType;
         level->m_levelType = GJLevelType::Editor;

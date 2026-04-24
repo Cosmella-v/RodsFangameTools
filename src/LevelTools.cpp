@@ -113,25 +113,29 @@ class $modify(MyPauseLayer, PauseLayer) {
     void customSetup() override {
         PauseLayer::customSetup();
 
-        m_fields->m_menu = typeinfo_cast<CCMenu*>(this->getChildByID("center-button-menu"));
-        bool copyMainLevels = Mod::get()->getSettingValue<bool>("copy-main-levels");
+        auto layer = GameManager::sharedState()->getPlayLayer();
+        auto oldLevel = layer->m_level;
 
-        if (copyMainLevels) {
-            CCSprite* buttonSprite = CircleButtonSprite::create(CCLabelBMFont::create("Copy\nLevel", "bigFont.fnt", 0.f, CCTextAlignment::kCCTextAlignmentCenter));
-            CCMenuItemSpriteExtra* button = CCMenuItemSpriteExtra::create(
-                buttonSprite,
-                this,
-                menu_selector(MyPauseLayer::onCopyLevel)
-            );
+        if (oldLevel->m_levelType == GJLevelType::Main) {
+            m_fields->m_menu = typeinfo_cast<CCMenu*>(this->getChildByID("center-button-menu"));
+            bool copyMainLevels = Mod::get()->getSettingValue<bool>("copy-main-levels");
 
-            m_fields->m_menu->addChild(button);
-            m_fields->m_menu->updateLayout();
+            if (copyMainLevels) {
+                CCSprite* buttonSprite = CircleButtonSprite::create(CCLabelBMFont::create("Copy\nLevel", "bigFont.fnt", 0.f, CCTextAlignment::kCCTextAlignmentCenter));
+                CCMenuItemSpriteExtra* button = CCMenuItemSpriteExtra::create(
+                    buttonSprite,
+                    this,
+                    menu_selector(MyPauseLayer::onCopyLevel)
+                );
+
+                m_fields->m_menu->addChild(button);
+                m_fields->m_menu->updateLayout();
+            }
         }
     }
 
     void onCopyLevel(CCObject* sender) {
-        auto thisScene = CCDirector::sharedDirector()->getRunningScene();
-        auto layer = thisScene->getChildByType<PlayLayer>(0);
+        auto layer = GameManager::sharedState()->getPlayLayer();
         auto oldLevel = layer->m_level;
         
         GameLevelManager* glm = GameLevelManager::sharedState();
