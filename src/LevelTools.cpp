@@ -1,7 +1,8 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/EditLevelLayer.hpp>
-#include <Geode/modify/LevelPage.hpp>
+// #include <Geode/modify/LevelPage.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
+#include <Geode/modify/PauseLayer.hpp>
 #include "Utils.hpp"
 
 using namespace geode::prelude;
@@ -51,22 +52,30 @@ class $modify(MyEditLevelLayer, EditLevelLayer) {
     }
 };
 
-class $modify(MyLevelPage, LevelPage) {
+/*class $modify(MyLevelPage, LevelPage) {
+    struct Fields {
+        CCMenu* m_menu;
+    };
+
     bool init(GJGameLevel* level) {
         if (!LevelPage::init(level)) return false;
 
-        bool copyMainLevels = Mod::get()->getSettingValue<bool>("copy-main-levels");
+        if (level && level->m_levelID > 0) {
+            bool copyMainLevels = Mod::get()->getSettingValue<bool>("copy-main-levels");
 
-        if (copyMainLevels) {
-            CCSprite* buttonSprite = CircleButtonSprite::create(CCLabelBMFont::create("Copy\nLevel", "bigFont.fnt", 0.f, CCTextAlignment::kCCTextAlignmentCenter));
-            CCMenuItemSpriteExtra* button = CCMenuItemSpriteExtra::create(
-                buttonSprite,
-                this,
-                menu_selector(MyLevelPage::onCopyLevel)
-            );
+            if (copyMainLevels) {
+                CCSprite* buttonSprite = CircleButtonSprite::create(CCLabelBMFont::create("Copy\nLevel", "bigFont.fnt", 0.f, CCTextAlignment::kCCTextAlignmentCenter));
+                CCMenuItemSpriteExtra* button = CCMenuItemSpriteExtra::create(
+                    buttonSprite,
+                    this,
+                    menu_selector(MyLevelPage::onCopyLevel)
+                );
 
-            CCMenu* menu = CCMenu::createWithItem(button);
-            this->addChild(menu);
+                CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+                m_fields->m_menu = CCMenu::createWithItem(button);
+                m_fields->m_menu->setPositionX(winSize.width * 0.9f);
+                this->addChild(m_fields->m_menu);
+            }
         }
 
         return true;
@@ -89,6 +98,58 @@ class $modify(MyLevelPage, LevelPage) {
         level->m_levelType = GJLevelType::Editor;
         level->m_levelString = llm->getMainLevelString(m_level->m_levelID);
         level->m_originalLevel = m_level->m_originalLevel;
+
+        CCScene* scene = EditLevelLayer::scene(level);
+        CCTransitionFade* transition = CCTransitionFade::create(0.5f, scene);
+        ccd->replaceScene(transition);
+    }
+};*/
+
+class $modify(MyPauseLayer, PauseLayer) {
+    struct Fields {
+        CCMenu* m_menu;
+    };
+
+    void customSetup() override {
+        PauseLayer::customSetup();
+
+        m_fields->m_menu = typeinfo_cast<CCMenu*>(this->getChildByID("center-button-menu"));
+        bool copyMainLevels = Mod::get()->getSettingValue<bool>("copy-main-levels");
+
+        if (copyMainLevels) {
+            CCSprite* buttonSprite = CircleButtonSprite::create(CCLabelBMFont::create("Copy\nLevel", "bigFont.fnt", 0.f, CCTextAlignment::kCCTextAlignmentCenter));
+            CCMenuItemSpriteExtra* button = CCMenuItemSpriteExtra::create(
+                buttonSprite,
+                this,
+                menu_selector(MyPauseLayer::onCopyLevel)
+            );
+
+            m_fields->m_menu->addChild(button);
+            m_fields->m_menu->updateLayout();
+        }
+    }
+
+    void onCopyLevel(CCObject* sender) {
+        auto thisScene = CCDirector::sharedDirector()->getRunningScene();
+        auto layer = thisScene->getChildByType<PlayLayer>(0);
+        auto oldLevel = layer->m_level;
+        
+        GameLevelManager* glm = GameLevelManager::sharedState();
+        GameManager* gm = GameManager::sharedState();
+        LocalLevelManager* llm = LocalLevelManager::sharedState();
+        CCDirector* ccd = CCDirector::sharedDirector();
+
+        if (ccd->getIsTransitioning()) return;
+        this->setKeypadEnabled(false);
+
+        // log::debug("Level string for \"{}\": {}", m_level->m_levelName, m_level->m_levelString);
+        
+        gm->m_sceneEnum = 2;
+        GJGameLevel* level = glm->createNewLevel();
+        level->copyLevelInfo(oldLevel);
+        level->m_levelType = GJLevelType::Editor;
+        level->m_levelString = llm->getMainLevelString(level->m_levelID);
+        level->m_originalLevel = level->m_originalLevel;
 
         CCScene* scene = EditLevelLayer::scene(level);
         CCTransitionFade* transition = CCTransitionFade::create(0.5f, scene);

@@ -12,6 +12,7 @@ This mod adds some cool <cg>utilities</c> for anyone who wishes to make <cy>Geom
 - Miscellaneous
   - Preview Main Level Data
 
+
 ## Recommended Mods
 
 **Unlisted Objects in Editor**: This mod adds useful objects in the editor (most importantly, the secret coin).
@@ -26,7 +27,7 @@ This mod adds some cool <cg>utilities</c> for anyone who wishes to make <cy>Geom
 
 <mod:capeling.garage-stats-menu>
 
-**GDShare**: This mod allows you to share levels with others. This mod can also fix a known bug (by RobTop) where secret coins get automatically deleted from the level each time it's reopened.
+**GDShare**: This mod allows you to share levels with others. This mod can also fix a known bug (by RobTop) where secret coins get automatically deleted from the level each time it's reopened (although you would need to backup the level each time).
 
 <mod:hjfod.gdshare>
 
