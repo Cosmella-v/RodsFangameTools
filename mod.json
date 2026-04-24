@@ -12,12 +12,7 @@
 	"developer": "OmgRod",
 	"description": "",
 	"dependencies": {
-		"geode.node-ids": ">=v1.20.0",
-		"alphalaneous.editortab_api": ">=2.1.5",
-		"legowiifun.unlisted_objects_in_editor": {
-			"required": false,
-			"version": ">=1.4.5"
-		}
+		"geode.node-ids": ">=v1.20.0"
 	},
 	"settings": {
 		"levels-title": {
@@ -31,6 +26,11 @@
 		},
 		"copy-level-string": {
 			"name": "Copy Level String",
+			"type": "bool",
+			"default": true
+		},
+		"paste-level-string": {
+			"name": "Paste Level String",
 			"type": "bool",
 			"default": true
 		},
